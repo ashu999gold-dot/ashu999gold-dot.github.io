@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --color-midnight: #08090D;
+  --color-navy-deep: #0D111A;
+  --color-navy-dark: #101522;
+  --color-navy-card: #13192B;
+  --color-indigo-deep: #25264A;
+  --color-violet-muted: #8D83C9;
+  --color-cream: #F1EBDD;
+  --color-text-muted: #A6A5AE;
+  --color-biolum-cyan: #38BDF8;
+  --color-biolum-emerald: #34D399;
+  --color-biolum-rose: #F472B6;
+  --color-biolum-gold: #FCD34D;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+:root {
+  --bg-midnight: #08090D;
+  --bg-card: rgba(16, 21, 34, 0.7);
+  --border-subtle: rgba(141, 131, 201, 0.15);
+  --border-hover: rgba(141, 131, 201, 0.4);
+}
+
+html {
+  background-color: #08090D;
+  color: #F1EBDD;
+  font-family: var(--font-body);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #08090D;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #08090D;
+}
+::-webkit-scrollbar-thumb {
+  background: #25264A;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8D83C9;
+}
+
+/* Atmospheric effects */
+.radial-mist {
+  background: radial-gradient(circle at 50% 50%, rgba(37, 38, 74, 0.35) 0%, rgba(8, 9, 13, 0) 70%);
+}
+
+.radial-glow-cyan {
+  background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15) 0%, rgba(8, 9, 13, 0) 65%);
+}
+
+.radial-glow-emerald {
+  background: radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.15) 0%, rgba(8, 9, 13, 0) 65%);
+}
+
+.glass-card {
+  background: rgba(16, 21, 34, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(141, 131, 201, 0.14);
+}
+
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  background: rgba(19, 25, 43, 0.85);
+  border-color: rgba(141, 131, 201, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Typography styles */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
