@@ -1,24 +1,32 @@
-import React from "react";
-import { ArrowDown, FolderGit2, Mail } from "lucide-react";
+import React, { useState } from "react";
+import { ArrowDown, FolderGit2, Mail, Volume2, VolumeX } from "lucide-react";
 import { NightFlowerValley } from "../experience/NightFlowerValley";
 import { PORTFOLIO_CONFIG } from "../config/portfolio.config";
 
 interface HeroSectionProps {
   onValleyLoaded?: () => void;
-  scrollProgress?: number;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onValleyLoaded,
-  scrollProgress = 0,
 }) => {
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  const handleAudioToggle = () => {
+    const toggleFn = (window as unknown as { __toggleValleyAudio?: () => boolean }).__toggleValleyAudio;
+    if (toggleFn) {
+      const playing = toggleFn();
+      setIsPlayingAudio(playing);
+    }
+  };
+
   return (
     <section
       id="hero"
       className="relative min-h-screen w-full flex flex-col justify-between items-center text-center px-4 sm:px-6 pt-24 pb-8 overflow-hidden select-none"
     >
       {/* 3D Night Flower Valley Canvas */}
-      <NightFlowerValley onLoaded={onValleyLoaded} scrollProgress={scrollProgress} />
+      <NightFlowerValley onLoaded={onValleyLoaded} />
 
       {/* Minimal Top & Bottom Transitions (Keep flowers 100% visible, no heavy darkening overlays) */}
       <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-[#06080E]/80 to-transparent pointer-events-none z-10" />
@@ -48,10 +56,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {PORTFOLIO_CONFIG.supportingCopy}
         </p>
 
-        {/* Primary Call to Actions */}
+        {/* Primary Call to Actions with Valley Dispersal Hook (HeroPage Technique) */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
             href="#projects"
+            data-valley-hover="true"
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#F1EBDD] hover:bg-white text-[#06080E] font-mono font-medium text-xs sm:text-sm transition-all duration-300 shadow-xl shadow-black/60 hover:scale-105 active:scale-95"
           >
             <FolderGit2 size={16} />
@@ -60,6 +69,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           <a
             href="#contact"
+            data-valley-hover="true"
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#101522]/70 hover:bg-[#1E1B4B]/80 text-[#F1EBDD] font-mono text-xs sm:text-sm border border-[#8D83C9]/30 transition-all duration-300 backdrop-blur-md hover:border-[#8D83C9]/60 hover:scale-105 active:scale-95"
           >
             <Mail size={16} className="text-[#8D83C9]" />
@@ -68,12 +78,42 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
       </div>
 
-      {/* Minimal Scroll Down Indicator */}
-      <div className="relative z-20 flex flex-col items-center gap-1.5 text-[#A6A5AE]/80 hover:text-[#F1EBDD] transition">
-        <a href="#about" className="flex flex-col items-center gap-1.5 text-xs font-mono group" aria-label="Scroll to About section">
-          <span className="tracking-widest uppercase text-[10px] text-[#8D83C9]">Scroll to Enter Valley</span>
-          <ArrowDown size={14} className="animate-bounce opacity-70 group-hover:opacity-100 transition" />
+      {/* Bottom Corner Bar (Scroll to Wander & Ambient Sound Toggle - HeroPage Architecture) */}
+      <div className="relative z-20 w-full max-w-6xl mx-auto px-4 flex items-center justify-between text-[#A6A5AE]/80 font-mono text-xs">
+        {/* Scroll Indicator */}
+        <a
+          href="#about"
+          className="flex items-center gap-2 group hover:text-[#F1EBDD] transition"
+          aria-label="Scroll to explore"
+        >
+          <span className="tracking-widest uppercase text-[10px] text-[#8D83C9]">Scroll to wander</span>
+          <ArrowDown size={13} className="animate-bounce opacity-70 group-hover:opacity-100 transition" />
         </a>
+
+        {/* Ambient Sound Toggle Button */}
+        <button
+          onClick={handleAudioToggle}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#101522]/60 hover:bg-[#1E1B4B]/80 border border-[#8D83C9]/20 hover:border-[#8D83C9]/50 text-[#F1EBDD] transition-all backdrop-blur-md cursor-pointer hover:scale-105"
+          aria-label={isPlayingAudio ? "Mute ambient valley soundtrack" : "Play ambient valley soundtrack"}
+          title={isPlayingAudio ? "Mute ambient sound" : "Play ambient sound"}
+        >
+          {isPlayingAudio ? (
+            <>
+              <Volume2 size={13} className="text-[#38BDF8]" />
+              <span className="text-[10px] uppercase tracking-wider text-[#38BDF8]">Sound on</span>
+              <span className="flex items-center gap-0.5 ml-1">
+                <span className="w-0.5 h-2.5 bg-[#38BDF8] rounded-full animate-pulse" />
+                <span className="w-0.5 h-3.5 bg-[#38BDF8] rounded-full animate-pulse delay-75" />
+                <span className="w-0.5 h-1.5 bg-[#38BDF8] rounded-full animate-pulse delay-150" />
+              </span>
+            </>
+          ) : (
+            <>
+              <VolumeX size={13} className="text-[#A6A5AE]" />
+              <span className="text-[10px] uppercase tracking-wider text-[#A6A5AE]">Sound off</span>
+            </>
+          )}
+        </button>
       </div>
     </section>
   );

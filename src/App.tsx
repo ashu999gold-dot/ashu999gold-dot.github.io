@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Navbar } from "./components/Navbar";
 import { CinematicLoader } from "./components/CinematicLoader";
 import { HeroSection } from "./sections/HeroSection";
@@ -13,22 +13,6 @@ import { Footer } from "./sections/Footer";
 
 export function App() {
   const [isSceneLoaded, setIsSceneLoaded] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      // Normalize scroll progress based on hero height
-      const heroEl = document.getElementById("hero");
-      if (heroEl) {
-        const heroHeight = heroEl.offsetHeight || window.innerHeight;
-        const progress = Math.min(1.5, Math.max(0, window.scrollY / heroHeight));
-        setScrollProgress(progress);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <div className="relative min-h-screen bg-[#08090D] text-[#F1EBDD] font-body selection:bg-[#8D83C9]/40 selection:text-white">
@@ -39,10 +23,9 @@ export function App() {
       <Navbar />
 
       <main>
-        {/* Hero Section with 3D Night Flower Valley */}
+        {/* Hero Section with 3D Night Flower Valley (Decoupled Passive Motion Loop) */}
         <HeroSection
           onValleyLoaded={() => setIsSceneLoaded(true)}
-          scrollProgress={scrollProgress}
         />
 
         {/* Section Divider Ethereal Light Line */}
