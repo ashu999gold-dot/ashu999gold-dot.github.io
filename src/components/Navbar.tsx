@@ -5,13 +5,10 @@ import { PORTFOLIO_CONFIG } from "../config/portfolio.config";
 
 export const Navbar: React.FC = () => {
   const [activeSection, setActiveSection] = useState("hero");
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-
       // Detect active section
       const sections = PORTFOLIO_CONFIG.navItems.map((item) =>
         item.href.replace("#", "")
@@ -20,7 +17,7 @@ export const Navbar: React.FC = () => {
         const el = document.getElementById(section);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= 200) {
+          if (rect.top <= 240) {
             setActiveSection(section);
             break;
           }
@@ -33,36 +30,76 @@ export const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled
-            ? "py-3 bg-[#08090D]/85 backdrop-blur-md border-b border-[#8D83C9]/15 shadow-xl shadow-black/40"
-            : "py-5 bg-transparent"
-        }`}
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-          {/* Logo / Identity */}
-          <a
-            href="#hero"
-            className="flex items-center gap-2 group text-left"
-            aria-label="Ashutosh Kumar Home"
-          >
-            <div className="w-8 h-8 rounded-full bg-[#101522] border border-[#8D83C9]/40 flex items-center justify-center text-[#F1EBDD] font-display font-bold text-xs group-hover:border-[#38BDF8] transition">
-              AK
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display font-semibold text-sm tracking-wide text-[#F1EBDD] group-hover:text-white transition">
-                {PORTFOLIO_CONFIG.name}
-              </span>
-              <span className="text-[10px] font-mono text-[#A6A5AE] hidden sm:inline">
-                IIT Gandhinagar
-              </span>
-            </div>
-          </a>
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 pt-4 pb-2 pointer-events-none transition-all duration-300">
+      <div className="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto">
+        {/* Logo / Identity Glass Pill */}
+        <a
+          href="#hero"
+          className="glass-pill px-3.5 py-1.5 flex items-center gap-2.5 group hover:border-white/30 transition shadow-lg"
+          aria-label="Ashutosh Kumar Home"
+        >
+          <div className="w-6 h-6 rounded-full bg-white/[0.08] border border-white/20 flex items-center justify-center text-[#F1EBDD] font-display font-bold text-[11px] group-hover:border-[#38BDF8] transition">
+            AK
+          </div>
+          <div className="flex flex-col text-left">
+            <span className="font-display font-semibold text-xs tracking-wide text-[#F1EBDD] group-hover:text-white transition">
+              {PORTFOLIO_CONFIG.name}
+            </span>
+            <span className="text-[9px] font-mono text-[#A6A5AE] hidden sm:inline leading-none">
+              IIT Gandhinagar
+            </span>
+          </div>
+        </a>
 
-          {/* Desktop Nav Items */}
-          <nav className="hidden md:flex items-center gap-1 bg-[#101522]/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#8D83C9]/15">
+        {/* Center Desktop Floating Glass Pill Nav */}
+        <nav className="hidden md:flex items-center gap-1 glass-pill px-3 py-1.5 shadow-xl">
+          {PORTFOLIO_CONFIG.navItems.map((item) => {
+            const sectionId = item.href.replace("#", "");
+            const isActive = activeSection === sectionId;
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                className={`relative px-3.5 py-1 rounded-full text-xs font-mono transition-all duration-200 ${
+                  isActive
+                    ? "text-[#F1EBDD] font-semibold bg-white/[0.12] border border-white/25 shadow-sm"
+                    : "text-[#A6A5AE] hover:text-[#F1EBDD] hover:bg-white/[0.05] border border-transparent"
+                }`}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </nav>
+
+        {/* Right Action Glass Pill */}
+        <div className="hidden md:flex items-center gap-2">
+          <a
+            href={PORTFOLIO_CONFIG.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass-pill px-3.5 py-1.5 flex items-center gap-1.5 text-xs font-mono text-[#F1EBDD] hover:border-white/30 hover:bg-white/[0.08] transition shadow-lg"
+            aria-label="GitHub Profile"
+          >
+            <GithubIcon size={13} />
+            <span>GitHub</span>
+          </a>
+        </div>
+
+        {/* Mobile Hamburger Button Glass Pill */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden glass-pill p-2 text-[#F1EBDD] cursor-pointer"
+          aria-label="Toggle navigation menu"
+        >
+          {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </div>
+
+      {/* Mobile Dropdown Glass Panel */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden mt-3 max-w-sm mx-auto glass-panel rounded-2xl p-4 shadow-2xl border border-white/15 pointer-events-auto">
+          <nav className="flex flex-col gap-1">
             {PORTFOLIO_CONFIG.navItems.map((item) => {
               const sectionId = item.href.replace("#", "");
               const isActive = activeSection === sectionId;
@@ -70,88 +107,32 @@ export const Navbar: React.FC = () => {
                 <a
                   key={item.label}
                   href={item.href}
-                  className={`px-3 py-1 rounded-full text-xs font-mono transition-all duration-200 ${
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl text-xs font-mono transition ${
                     isActive
-                      ? "bg-[#8D83C9]/25 text-[#F1EBDD] font-semibold border border-[#8D83C9]/40"
-                      : "text-[#A6A5AE] hover:text-[#F1EBDD] border border-transparent"
+                      ? "bg-white/[0.14] text-[#F1EBDD] font-semibold border border-white/20"
+                      : "text-[#A6A5AE] hover:text-[#F1EBDD] hover:bg-white/[0.06]"
                   }`}
                 >
                   {item.label}
                 </a>
               );
             })}
-          </nav>
-
-          {/* Right Action */}
-          <div className="hidden md:flex items-center gap-3">
-            <a
-              href={PORTFOLIO_CONFIG.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#101522]/80 hover:bg-[#25264A] text-[#F1EBDD] text-xs font-mono border border-[#8D83C9]/20 transition"
-              aria-label="GitHub Profile"
-            >
-              <GithubIcon size={13} />
-              <span>GitHub</span>
-            </a>
-          </div>
-
-          {/* Mobile Hamburger Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg bg-[#101522]/80 border border-[#8D83C9]/20 text-[#F1EBDD] cursor-pointer"
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
-      </header>
-
-      {/* Mobile Drawer */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden bg-[#08090D]/95 backdrop-blur-xl flex flex-col justify-between p-6">
-          <div className="flex items-center justify-between border-b border-[#8D83C9]/15 pb-4">
-            <span className="font-display font-bold text-base text-[#F1EBDD]">
-              {PORTFOLIO_CONFIG.name}
-            </span>
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="p-2 rounded-lg bg-[#101522] border border-[#8D83C9]/20 text-[#F1EBDD]"
-              aria-label="Close menu"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          <nav className="flex flex-col gap-3 my-auto">
-            {PORTFOLIO_CONFIG.navItems.map((item) => (
+            <div className="pt-2 mt-2 border-t border-white/10 flex justify-center">
               <a
-                key={item.label}
-                href={item.href}
+                href={PORTFOLIO_CONFIG.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="font-display text-xl text-[#F1EBDD] hover:text-[#38BDF8] transition py-2 border-b border-white/5"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/[0.1] text-xs font-mono text-[#F1EBDD] border border-white/15"
               >
-                {item.label}
+                <GithubIcon size={14} />
+                <span>Visit GitHub Profile</span>
               </a>
-            ))}
+            </div>
           </nav>
-
-          <div className="pt-4 border-t border-[#8D83C9]/15 flex items-center justify-between">
-            <span className="text-xs font-mono text-[#A6A5AE]">
-              IIT Gandhinagar · ME & CSE
-            </span>
-            <a
-              href={PORTFOLIO_CONFIG.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25264A] text-xs font-mono text-[#F1EBDD]"
-            >
-              <GithubIcon size={13} />
-              <span>GitHub</span>
-            </a>
-          </div>
         </div>
       )}
-    </>
+    </header>
   );
 };

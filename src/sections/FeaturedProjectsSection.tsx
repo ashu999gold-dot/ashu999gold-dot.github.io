@@ -23,7 +23,7 @@ export const FeaturedProjectsSection: React.FC = () => {
       : PROJECTS_DATA.filter((p) => p.category === selectedCategory);
 
   return (
-    <section id="projects" className="relative py-24 px-4 sm:px-6 max-w-6xl mx-auto">
+    <section id="projects" className="relative py-28 px-4 sm:px-6 max-w-6xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <SectionHeader
           badge="04 // FEATURED WORK"
@@ -31,19 +31,19 @@ export const FeaturedProjectsSection: React.FC = () => {
           subtitle="A curated inventory of actual applications, algorithms, and interactive tools built across web, graphics, and AI."
         />
 
-        {/* Category Filters */}
-        <div className="flex items-center gap-1.5 flex-wrap p-1.5 rounded-2xl bg-[#101522]/80 border border-[#8D83C9]/15 backdrop-blur-md self-start md:self-auto">
-          <div className="px-2 text-xs font-mono text-[#8D83C9] flex items-center gap-1 hidden sm:flex">
+        {/* Category Filters Glass Pill Toolbar */}
+        <div className="flex items-center gap-1.5 flex-wrap p-1.5 rounded-full glass-pill self-start md:self-auto shadow-xl">
+          <div className="px-2.5 text-xs font-mono text-[#8D83C9] flex items-center gap-1 hidden sm:flex">
             <Filter size={12} />
           </div>
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-mono transition cursor-pointer ${
                 selectedCategory === cat
-                  ? "bg-[#8D83C9]/30 text-[#F1EBDD] font-medium border border-[#8D83C9]/50 shadow"
-                  : "text-[#A6A5AE] hover:text-[#F1EBDD] border border-transparent"
+                  ? "bg-white/[0.15] text-[#F1EBDD] font-semibold border border-white/25 shadow-sm"
+                  : "text-[#A6A5AE] hover:text-[#F1EBDD] hover:bg-white/[0.05] border border-transparent"
               }`}
             >
               {cat}
@@ -52,7 +52,7 @@ export const FeaturedProjectsSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Projects Grid */}
+      {/* Projects Grid Floating over Night Valley */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProjects.map((project) => (
           <ProjectCard

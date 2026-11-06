@@ -4,27 +4,27 @@ import { GraduationCap, BookOpen, Binary, Award } from "lucide-react";
 
 export const AcademicSection: React.FC = () => {
   return (
-    <section id="academics" className="relative py-20 px-4 sm:px-6 max-w-6xl mx-auto">
+    <section id="academics" className="relative py-24 px-4 sm:px-6 max-w-6xl mx-auto">
       <SectionHeader
         badge="02 // ACADEMIC PROFILE"
         title="Foundation at IIT Gandhinagar"
         subtitle="Pursuing rigorous mechanical engineering fundamentals paired with a computer science minor."
       />
 
-      {/* Academic Profile Hero Card */}
-      <div className="glass-card rounded-2xl p-6 sm:p-10 border border-[#8D83C9]/20 relative overflow-hidden mb-8">
-        <div className="absolute top-0 right-0 w-96 h-96 radial-glow-cyan opacity-25 pointer-events-none" />
+      {/* Academic Profile Glassmorphism Monolith */}
+      <div className="glass-panel glass-specular rounded-3xl p-6 sm:p-10 border border-white/12 relative overflow-hidden mb-8 shadow-2xl">
+        <div className="absolute top-0 right-0 w-96 h-96 radial-glow-cyan opacity-20 pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-[#8D83C9]/15">
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-white/10">
           <div className="flex items-center gap-4 sm:gap-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#101522] border-2 border-[#8D83C9]/40 flex items-center justify-center flex-shrink-0 shadow-lg">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/[0.06] border border-white/20 flex items-center justify-center flex-shrink-0 shadow-lg">
               <GraduationCap className="text-[#38BDF8]" size={36} />
             </div>
             <div>
               <span className="text-xs font-mono text-[#8D83C9] uppercase tracking-wider">
                 Institute of Technology
               </span>
-              <h3 className="font-display font-bold text-2xl sm:text-3xl text-[#F1EBDD]">
+              <h3 className="font-display font-bold text-2xl sm:text-3xl text-[#F1EBDD] mt-0.5">
                 Indian Institute of Technology Gandhinagar
               </h3>
               <p className="text-sm font-body text-[#A6A5AE] mt-0.5">
@@ -34,7 +34,7 @@ export const AcademicSection: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <span className="px-3.5 py-1.5 rounded-full bg-[#25264A]/70 border border-[#8D83C9]/30 text-xs font-mono text-[#F1EBDD]">
+            <span className="glass-pill px-4 py-1.5 text-xs font-mono text-[#F1EBDD]">
               Undergraduate Degree
             </span>
           </div>
@@ -43,8 +43,8 @@ export const AcademicSection: React.FC = () => {
         {/* Dual Disciplines Breakdown */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8">
           {/* Major */}
-          <div className="p-5 rounded-xl bg-[#08090D]/60 border border-[#8D83C9]/15 flex items-start gap-4">
-            <div className="p-2.5 rounded-lg bg-[#25264A]/60 text-[#38BDF8]">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-[#38BDF8]/30 transition duration-300 flex items-start gap-4">
+            <div className="p-3 rounded-xl bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20 flex-shrink-0">
               <BookOpen size={20} />
             </div>
             <div>
@@ -61,8 +61,8 @@ export const AcademicSection: React.FC = () => {
           </div>
 
           {/* Minor */}
-          <div className="p-5 rounded-xl bg-[#08090D]/60 border border-[#8D83C9]/15 flex items-start gap-4">
-            <div className="p-2.5 rounded-lg bg-[#25264A]/60 text-[#C084FC]">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-[#C084FC]/30 transition duration-300 flex items-start gap-4">
+            <div className="p-3 rounded-xl bg-[#C084FC]/10 text-[#C084FC] border border-[#C084FC]/20 flex-shrink-0">
               <Binary size={20} />
             </div>
             <div>
@@ -79,7 +79,7 @@ export const AcademicSection: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-[#8D83C9]/10 flex items-center justify-between text-xs font-mono text-[#A6A5AE]">
+        <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-[#A6A5AE]">
           <span className="flex items-center gap-1.5">
             <Award size={13} className="text-[#34D399]" />
             Verified Academic Profile · IITGN

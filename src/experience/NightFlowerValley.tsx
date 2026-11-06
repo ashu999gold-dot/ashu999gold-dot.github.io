@@ -15,9 +15,91 @@ import {
 
 interface NightFlowerValleyProps {
   onLoaded?: () => void;
-  isAudioMuted?: boolean;
-  onAudioToggle?: () => void;
 }
+
+interface ValleyKeyframe {
+  p: number;
+  cam: THREE.Vector3;
+  target: THREE.Vector3;
+  fog: number;
+  cyan: THREE.Vector3;
+  violet: THREE.Vector3;
+  gold: THREE.Vector3;
+}
+
+// 7 Section-Aware Waypoints spanning the full journey from Home (0.0) to Footer (1.0)
+const WAYPOINTS: ValleyKeyframe[] = [
+  // 0. Home / Hero (0.0) - Wide cinematic panoramic view
+  {
+    p: 0.0,
+    cam: new THREE.Vector3(0, 2.65, 10.0),
+    target: new THREE.Vector3(0, 1.1, 0),
+    fog: 0.022,
+    cyan: new THREE.Vector3(-4.0, 1.2, 2.0),
+    violet: new THREE.Vector3(4.5, 1.4, -1.0),
+    gold: new THREE.Vector3(0.0, 0.85, 4.0),
+  },
+  // 1. About (0.16) - Descend closer into the flower grove
+  {
+    p: 0.16,
+    cam: new THREE.Vector3(0.85, 1.95, 3.2),
+    target: new THREE.Vector3(0.15, 0.95, -6.5),
+    fog: 0.024,
+    cyan: new THREE.Vector3(-3.5, 1.1, -2.0),
+    violet: new THREE.Vector3(3.8, 1.3, -5.0),
+    gold: new THREE.Vector3(-0.5, 0.8, 0.5),
+  },
+  // 2. Academic Journey (0.33) - Valley floor depth behind timeline
+  {
+    p: 0.33,
+    cam: new THREE.Vector3(-1.1, 2.15, -5.0),
+    target: new THREE.Vector3(0.1, 1.05, -15.0),
+    fog: 0.025,
+    cyan: new THREE.Vector3(-4.2, 1.2, -9.5),
+    violet: new THREE.Vector3(3.5, 1.3, -12.5),
+    gold: new THREE.Vector3(0.2, 0.85, -7.0),
+  },
+  // 3. Areas of Interest / Focus (0.50) - Meandering turn through star lilies
+  {
+    p: 0.50,
+    cam: new THREE.Vector3(1.25, 1.95, -13.5),
+    target: new THREE.Vector3(-0.3, 0.95, -23.5),
+    fog: 0.023,
+    cyan: new THREE.Vector3(-3.2, 1.2, -18.5),
+    violet: new THREE.Vector3(4.0, 1.4, -20.5),
+    gold: new THREE.Vector3(-0.4, 0.8, -15.5),
+  },
+  // 4. Featured Projects (0.68) - Broad elevated view showing valley around floating cards
+  {
+    p: 0.68,
+    cam: new THREE.Vector3(0.0, 2.45, -23.0),
+    target: new THREE.Vector3(0.0, 1.05, -35.0),
+    fog: 0.022,
+    cyan: new THREE.Vector3(-4.5, 1.3, -28.5),
+    violet: new THREE.Vector3(4.2, 1.4, -30.5),
+    gold: new THREE.Vector3(0.0, 0.9, -25.0),
+  },
+  // 5. Skills & GitHub Explorer (0.84) - Soft bioluminescent glade
+  {
+    p: 0.84,
+    cam: new THREE.Vector3(-0.7, 2.05, -32.0),
+    target: new THREE.Vector3(0.2, 0.95, -43.0),
+    fog: 0.025,
+    cyan: new THREE.Vector3(-3.8, 1.2, -37.5),
+    violet: new THREE.Vector3(3.6, 1.3, -39.5),
+    gold: new THREE.Vector3(0.1, 0.85, -34.0),
+  },
+  // 6. Contact & Footer (1.00) - Tranquil darker nocturnal clearing
+  {
+    p: 1.0,
+    cam: new THREE.Vector3(0.0, 1.75, -41.0),
+    target: new THREE.Vector3(0.0, 0.85, -52.0),
+    fog: 0.028,
+    cyan: new THREE.Vector3(-3.5, 1.1, -46.5),
+    violet: new THREE.Vector3(3.8, 1.3, -48.5),
+    gold: new THREE.Vector3(0.0, 0.9, -43.5),
+  },
+];
 
 export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
   onLoaded,
@@ -46,26 +128,20 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
     // --- Scene Setup ---
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x04060a);
-    // Exponential atmospheric fog with subtle deep night mist
-    scene.fog = new THREE.FogExp2(0x04060a, isMobile ? 0.035 : 0.024);
+    scene.fog = new THREE.FogExp2(0x04060a, isMobile ? 0.035 : 0.022);
 
     // --- Camera Hierarchy with Breathing Rig (HeroPage Technique) ---
-    // cameraContainer moves along valley path
-    // breathContainer adds organic periodic sway & subtle breathing
-    // camera performs rotational tilt towards cursor
     const cameraContainer = new THREE.Group();
     const breathContainer = new THREE.Group();
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 120);
 
-    const initialCamPos = new THREE.Vector3(0, 2.5, 9.5);
+    const initialCamPos = WAYPOINTS[0].cam.clone();
     cameraContainer.position.copy(initialCamPos);
     breathContainer.add(camera);
     cameraContainer.add(breathContainer);
     scene.add(cameraContainer);
 
     // --- Renderer Setup with Intelligent DPR Capping (HeroPage Technique) ---
-    // On desktop/integrated GPUs, capping composer to 1.0 eliminates fillrate choking
-    // while keeping geometry crisp and maintaining solid 60 FPS
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
@@ -89,7 +165,6 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
     container.appendChild(renderer.domElement);
 
     // --- Post-Processing with Fill-Rate Optimization ---
-    // HeroPage caps composer pixel ratio to 1.0 to avoid 4x overdraw on high-DPI
     const composer = new EffectComposer(renderer);
     composer.setPixelRatio(1.0);
     composer.setSize(width, height);
@@ -99,9 +174,9 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
 
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(width, height),
-      isMobile ? 0.32 : 0.40, // controlled strength
-      0.32,                   // radius
-      0.72                    // threshold (cores glow, background dark)
+      isMobile ? 0.30 : 0.38,
+      0.32,
+      0.72
     );
     composer.addPass(bloomPass);
 
@@ -109,7 +184,7 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
     composer.addPass(outputPass);
 
     // --- Atmospheric Night Lighting ---
-    const ambientLight = new THREE.AmbientLight(0x0a0f1d, 0.7);
+    const ambientLight = new THREE.AmbientLight(0x090e1c, 0.75);
     scene.add(ambientLight);
 
     const moonRimLight = new THREE.DirectionalLight(0x93a5cf, 1.8);
@@ -120,29 +195,30 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
     frontMoon.position.set(-6, 5, 8);
     scene.add(frontMoon);
 
-    const cyanLight = new THREE.PointLight(0x38bdf8, 1.6, 16, 2.0);
-    cyanLight.position.set(-4.0, 1.2, 1.5);
+    const cyanLight = new THREE.PointLight(0x38bdf8, 1.8, 18, 2.0);
+    cyanLight.position.copy(WAYPOINTS[0].cyan);
     scene.add(cyanLight);
 
-    const violetLight = new THREE.PointLight(0xc084fc, 1.8, 18, 2.0);
-    violetLight.position.set(4.5, 1.4, -1.0);
+    const violetLight = new THREE.PointLight(0xc084fc, 1.9, 20, 2.0);
+    violetLight.position.copy(WAYPOINTS[0].violet);
     scene.add(violetLight);
 
-    const goldLight = new THREE.PointLight(0xfde047, 1.3, 14, 2.2);
-    goldLight.position.set(0.0, 0.8, 4.0);
+    const goldLight = new THREE.PointLight(0xfde047, 1.4, 16, 2.2);
+    goldLight.position.copy(WAYPOINTS[0].gold);
     scene.add(goldLight);
 
-    // --- Valley Topography ---
-    const terrainGeo = new THREE.PlaneGeometry(60, 75, 50, 50);
+    // --- Extended Valley Topography across Full Scroll Journey ---
+    const terrainGeo = new THREE.PlaneGeometry(80, 130, 60, 60);
     terrainGeo.rotateX(-Math.PI / 2);
 
     const posAttr = terrainGeo.attributes.position;
     for (let i = 0; i < posAttr.count; i++) {
       const x = posAttr.getX(i);
       const z = posAttr.getZ(i);
-      const sideDist = Math.abs(x);
-      const hills = Math.pow(sideDist * 0.16, 2.0) * 1.35;
-      const mounds = Math.sin(x * 0.28 + z * 0.2) * 0.35 + Math.cos(z * 0.16) * 0.4;
+      const pathCenter = Math.sin(z * 0.12) * 1.5;
+      const sideDist = Math.abs(x - pathCenter);
+      const hills = Math.pow(sideDist * 0.15, 2.0) * 1.35;
+      const mounds = Math.sin(x * 0.25 + z * 0.18) * 0.35 + Math.cos(z * 0.14) * 0.4;
       posAttr.setY(i, hills + mounds - 0.75);
     }
     terrainGeo.computeVertexNormals();
@@ -153,18 +229,18 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
       metalness: 0.05,
     });
     const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
-    terrainMesh.position.set(0, 0, -6);
+    terrainMesh.position.set(0, 0, -20);
     scene.add(terrainMesh);
 
     const sampleTerrainHeight = (x: number, z: number) => {
-      const sideDist = Math.abs(x);
-      const hills = Math.pow(sideDist * 0.16, 2.0) * 1.35;
-      const mounds = Math.sin(x * 0.28 + (z - 6) * 0.2) * 0.35 + Math.cos((z - 6) * 0.16) * 0.4;
+      const pathCenter = Math.sin(z * 0.12) * 1.5;
+      const sideDist = Math.abs(x - pathCenter);
+      const hills = Math.pow(sideDist * 0.15, 2.0) * 1.35;
+      const mounds = Math.sin(x * 0.25 + (z - 20) * 0.18) * 0.35 + Math.cos((z - 20) * 0.14) * 0.4;
       return hills + mounds - 0.75;
     };
 
-    // --- GPU Shaders & Fast Noise (Replicated from HeroPage) ---
-    // In HeroPage, fastNoise3d and screen-space pointer displacement execute 100% on GPU
+    // --- GPU Shaders & Fast Noise (HeroPage Architecture) ---
     const shaderUniforms = {
       uTime: { value: 0 },
       uMousePosition: { value: new THREE.Vector2(0, 0) },
@@ -261,7 +337,6 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
           "#include <dithering_fragment>",
           `
           #include <dithering_fragment>
-          // Subtle touch/hover bioluminescence brightening (HeroPage technique)
           gl_FragColor.rgb += gl_FragColor.rgb * (vHoverGlow * 0.45);
           `
         );
@@ -320,11 +395,11 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
     const alliumStemGeo = createOrganicStemGeometry(1.1, 0.04);
     const alliumSprayGeo = createAlliumSprayGeometry();
 
-    // Instance counts tuned for high visual richness and guaranteed 60fps
-    const bellCount = isMobile ? 300 : 750;
-    const lilyCount = isMobile ? 380 : 900;
-    const daisyCount = isMobile ? 260 : 650;
-    const alliumCount = isMobile ? 220 : 550;
+    // Instance counts tuned for high visual richness spanning the entire journey
+    const bellCount = isMobile ? 420 : 1100;
+    const lilyCount = isMobile ? 520 : 1400;
+    const daisyCount = isMobile ? 380 : 1000;
+    const alliumCount = isMobile ? 320 : 850;
 
     const bellStemMesh = new THREE.InstancedMesh(bellStemGeo, stemMat, bellCount);
     const bellCorollaMesh = new THREE.InstancedMesh(bellCorollaGeo, petalMat, bellCount);
@@ -372,11 +447,14 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
     const dummy = new THREE.Object3D();
     const coreDummy = new THREE.Object3D();
 
+    // Natural meandering placement down the entire valley (Z from +12 to -52)
     const generatePlacement = (spreadX: number, spreadZ: number, offsetZ: number) => {
       let x = (Math.random() - 0.5) * spreadX;
       let z = (Math.random() - 0.5) * spreadZ + offsetZ;
-      if (Math.abs(x) < 4.8 && z > 0.5) {
-        x = (x >= 0 ? 1 : -1) * (4.8 + Math.random() * (spreadX * 0.45));
+      const pathX = Math.sin(z * 0.12) * 1.5;
+      const distFromPath = Math.abs(x - pathX);
+      if (distFromPath < 3.8) {
+        x = pathX + (x >= pathX ? 1 : -1) * (3.8 + Math.random() * (spreadX * 0.42));
       }
       const y = sampleTerrainHeight(x, z);
       return { x, y, z };
@@ -384,7 +462,7 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
 
     // Populate Bell Lilies
     for (let i = 0; i < bellCount; i++) {
-      const { x, y, z } = generatePlacement(40, 52, -4);
+      const { x, y, z } = generatePlacement(48, 70, -20);
       const scale = 0.75 + Math.random() * 0.6;
       const rotY = Math.random() * Math.PI * 2;
       const rotX = (Math.random() - 0.5) * 0.15;
@@ -415,7 +493,7 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
 
     // Populate Radiant Star Lilies
     for (let i = 0; i < lilyCount; i++) {
-      const { x, y, z } = generatePlacement(38, 50, -3);
+      const { x, y, z } = generatePlacement(46, 68, -19);
       const scale = 0.8 + Math.random() * 0.65;
       const rotY = Math.random() * Math.PI * 2;
       const rotX = (Math.random() - 0.5) * 0.12;
@@ -446,7 +524,7 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
 
     // Populate Wild Night Daisies
     for (let i = 0; i < daisyCount; i++) {
-      const { x, y, z } = generatePlacement(36, 48, -2);
+      const { x, y, z } = generatePlacement(44, 66, -18);
       const scale = 0.7 + Math.random() * 0.55;
       const rotY = Math.random() * Math.PI * 2;
       const rotX = (Math.random() - 0.5) * 0.1;
@@ -477,7 +555,7 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
 
     // Populate Allium / Puff Sprays
     for (let i = 0; i < alliumCount; i++) {
-      const { x, y, z } = generatePlacement(36, 48, -3);
+      const { x, y, z } = generatePlacement(44, 66, -20);
       const scale = 0.85 + Math.random() * 0.65;
       const rotY = Math.random() * Math.PI * 2;
 
@@ -510,17 +588,17 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
       scene.add(m);
     });
 
-    // --- Floating Spores Animated 100% on GPU (HeroPage Zero-CPU Technique) ---
-    const sporeCount = isMobile ? 300 : 700;
+    // --- Floating Spores Animated 100% on GPU ---
+    const sporeCount = isMobile ? 400 : 1000;
     const sporeGeo = new THREE.BufferGeometry();
     const sporePos = new Float32Array(sporeCount * 3);
     const sporePhases = new Float32Array(sporeCount);
     const sporeSpeeds = new Float32Array(sporeCount * 3);
 
     for (let i = 0; i < sporeCount; i++) {
-      sporePos[i * 3] = (Math.random() - 0.5) * 36;
-      sporePos[i * 3 + 1] = 0.3 + Math.random() * 4.8;
-      sporePos[i * 3 + 2] = (Math.random() - 0.5) * 44 - 2;
+      sporePos[i * 3] = (Math.random() - 0.5) * 44;
+      sporePos[i * 3 + 1] = 0.3 + Math.random() * 5.0;
+      sporePos[i * 3 + 2] = (Math.random() - 0.5) * 64 - 20;
       sporePhases[i] = Math.random() * Math.PI * 2;
       sporeSpeeds[i * 3] = 0.4 + Math.random() * 0.6;
       sporeSpeeds[i * 3 + 1] = 0.5 + Math.random() * 0.5;
@@ -554,7 +632,6 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
       opacity: 0.85,
     });
 
-    // Animate spores purely inside the GPU vertex shader - zero CPU re-uploads!
     sporeMat.onBeforeCompile = (shader) => {
       shader.uniforms.uTime = shaderUniforms.uTime;
       shader.uniforms.uDispersalProgress = shaderUniforms.uDispersalProgress;
@@ -570,12 +647,10 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
         "#include <begin_vertex>",
         `
         #include <begin_vertex>
-        // Harmonic GPU drifting
         transformed.x += cos(uTime * aSpeed.x * 0.4 + aPhase) * 0.35;
         transformed.y += sin(uTime * aSpeed.y * 0.6 + aPhase) * 0.25;
         transformed.z += sin(uTime * aSpeed.z * 0.4 + aPhase) * 0.3;
 
-        // Dispersal puff
         if (uDispersalProgress > 0.001) {
           transformed.y += uDispersalProgress * 2.5 * aSpeed.y;
           transformed.x += sin(aPhase) * uDispersalProgress * 1.8;
@@ -661,16 +736,16 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
     (window as unknown as { __valleyRenderer?: THREE.WebGLRenderer; __valleyUniforms?: typeof shaderUniforms }).__valleyRenderer = renderer;
     (window as unknown as { __valleyUniforms?: typeof shaderUniforms }).__valleyUniforms = shaderUniforms;
 
-    // --- Decoupled Passive Scroll Listener (Zero React Re-renders!) ---
+    // --- Global Document Scroll Listener (Zero React Re-renders!) ---
     let targetScroll = 0;
     let smoothedScroll = 0;
 
     const handleScroll = () => {
-      const hero = container.parentElement;
-      const heroH = hero ? hero.offsetHeight : window.innerHeight;
-      targetScroll = Math.max(0, Math.min(1.5, window.scrollY / heroH));
+      const docH = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      targetScroll = Math.max(0, Math.min(1.0, window.scrollY / docH));
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
     // --- Mouse & Pointer Damping ---
     const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
@@ -718,7 +793,6 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
         });
       });
     };
-    // Re-check after DOM mount
     setTimeout(setupHoverListeners, 400);
 
     // Resize Handling
@@ -755,6 +829,36 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
       setTimeout(() => onLoaded(), 100);
     }
 
+    // --- Waypoint Interpolation Helpers ---
+    const tempCam = new THREE.Vector3();
+    const tempTarget = new THREE.Vector3();
+    const tempCyan = new THREE.Vector3();
+    const tempViolet = new THREE.Vector3();
+    const tempGold = new THREE.Vector3();
+
+    function interpolateWaypoints(p: number) {
+      const clampedP = Math.max(0, Math.min(1, p));
+      let i = 0;
+      while (i < WAYPOINTS.length - 2 && WAYPOINTS[i + 1].p < clampedP) {
+        i++;
+      }
+      const w1 = WAYPOINTS[i];
+      const w2 = WAYPOINTS[i + 1];
+      const span = w2.p - w1.p;
+      const localT = span > 0 ? (clampedP - w1.p) / span : 0;
+      // Smoothstep for natural ease-in-out between sections
+      const t = localT * localT * (3 - 2 * localT);
+
+      tempCam.lerpVectors(w1.cam, w2.cam, t);
+      tempTarget.lerpVectors(w1.target, w2.target, t);
+      const fog = THREE.MathUtils.lerp(w1.fog, w2.fog, t);
+      tempCyan.lerpVectors(w1.cyan, w2.cyan, t);
+      tempViolet.lerpVectors(w1.violet, w2.violet, t);
+      tempGold.lerpVectors(w1.gold, w2.gold, t);
+
+      return { cam: tempCam, target: tempTarget, fog, cyan: tempCyan, violet: tempViolet, gold: tempGold };
+    }
+
     // --- High-Performance Animation Loop with Delta-Time Damping ---
     let animationFrameId: number;
     const clock = new THREE.Clock();
@@ -767,7 +871,6 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
       const time = clock.getElapsedTime();
 
       // Delta-time based exponential damping (HeroPage Formula)
-      // Guarantees consistent feel at 30, 60, 120, or 144 Hz
       const damp = 1.0 - Math.exp(-6.0 * dt);
       const slowDamp = 1.0 - Math.exp(-3.5 * dt);
 
@@ -775,7 +878,7 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
       mouse.x += (mouse.targetX - mouse.x) * damp;
       mouse.y += (mouse.targetY - mouse.y) * damp;
 
-      // 2. Smooth scroll interpolation
+      // 2. Smooth document scroll interpolation
       smoothedScroll += (targetScroll - smoothedScroll) * slowDamp;
 
       // 3. Smooth button hover dispersal transition
@@ -787,53 +890,69 @@ export const NightFlowerValley: React.FC<NightFlowerValleyProps> = ({
       shaderUniforms.uDispersalProgress.value = buttonHoverProgress;
 
       if (!prefersReducedMotion) {
-        // Idle camera auto-drift (HeroPage Technique)
-        const autoDriftZ = Math.sin(time * 0.15) * 0.2;
+        // Interpolate through continuous valley path based on global scroll
+        const state = interpolateWaypoints(smoothedScroll);
 
-        // Camera scroll path
-        const targetCamX = mouse.x * 0.7;
-        const targetCamY = initialCamPos.y - smoothedScroll * 1.25 + mouse.y * 0.22;
-        const targetCamZ = initialCamPos.z - smoothedScroll * 5.2 + autoDriftZ;
+        // Idle auto-drift oscillation
+        const autoDriftZ = Math.sin(time * 0.15) * 0.18;
+
+        // Camera position with mouse parallax
+        const targetCamX = state.cam.x + mouse.x * 0.65;
+        const targetCamY = state.cam.y + mouse.y * 0.22;
+        const targetCamZ = state.cam.z + autoDriftZ;
 
         cameraContainer.position.x += (targetCamX - cameraContainer.position.x) * damp;
         cameraContainer.position.y += (targetCamY - cameraContainer.position.y) * damp;
         cameraContainer.position.z += (targetCamZ - cameraContainer.position.z) * damp;
 
-        // Camera look target
-        const lookTargetY = 1.05 - smoothedScroll * 0.85;
-        const lookTargetZ = -smoothedScroll * 4.0;
-        camera.lookAt(targetCamX * 0.3, lookTargetY, lookTargetZ);
+        // Dynamic lookAt target
+        const lookX = state.target.x + mouse.x * 0.25;
+        const lookY = state.target.y;
+        const lookZ = state.target.z;
+        camera.lookAt(lookX, lookY, lookZ);
 
-        // Subtle rotational tilt towards cursor (HeroPage Technique)
-        const targetRotY = -mouse.x * 0.045;
-        const targetRotX = mouse.y * 0.035;
+        // Subtle rotational tilt towards cursor
+        const targetRotY = -mouse.x * 0.04;
+        const targetRotX = mouse.y * 0.03;
         camera.rotation.y += (targetRotY - camera.rotation.y) * slowDamp;
         camera.rotation.x += (targetRotX - camera.rotation.x) * slowDamp;
 
-        // Organic harmonic breathing container (HeroPage Technique)
-        breathContainer.position.y = 0.025 * Math.cos(1.15 * time);
-        breathContainer.position.z = 0.065 * Math.sin(0.95 * time);
-        breathContainer.rotation.z = 0.006 * Math.sin(0.75 * time);
+        // Organic harmonic breathing rig
+        breathContainer.position.y = 0.022 * Math.cos(1.15 * time);
+        breathContainer.position.z = 0.055 * Math.sin(0.95 * time);
+        breathContainer.rotation.z = 0.005 * Math.sin(0.75 * time);
 
-        // Dynamic FOV expansion on CTA hover (HeroPage Technique)
+        // Dynamic FOV expansion on CTA hover
         const targetFov = 40 + buttonHoverProgress * 4.5;
         if (Math.abs(camera.fov - targetFov) > 0.01) {
           camera.fov += (targetFov - camera.fov) * damp;
           camera.updateProjectionMatrix();
         }
 
-        // Swaying valley point lights
-        cyanLight.position.x = -4.0 + Math.sin(time * 0.55) * 0.5;
-        cyanLight.position.z = 1.5 + Math.cos(time * 0.45) * 0.4;
-        violetLight.position.x = 4.5 + Math.cos(time * 0.65) * 0.4;
-        violetLight.position.z = -1.0 + Math.sin(time * 0.4) * 0.5;
+        // Section-aware light positions with organic swaying
+        cyanLight.position.x = state.cyan.x + Math.sin(time * 0.55) * 0.45;
+        cyanLight.position.y = state.cyan.y;
+        cyanLight.position.z = state.cyan.z + Math.cos(time * 0.45) * 0.4;
+
+        violetLight.position.x = state.violet.x + Math.cos(time * 0.65) * 0.45;
+        violetLight.position.y = state.violet.y;
+        violetLight.position.z = state.violet.z + Math.sin(time * 0.4) * 0.45;
+
+        goldLight.position.x = state.gold.x + Math.sin(time * 0.35) * 0.35;
+        goldLight.position.y = state.gold.y;
+        goldLight.position.z = state.gold.z;
+
+        // Dynamic fog adaptation per section
+        if (scene.fog && scene.fog instanceof THREE.FogExp2) {
+          scene.fog.density = state.fog;
+        }
       }
 
-      // Render through composer and measure execution time
+      // Render through composer and record metrics
       const t0 = performance.now();
       composer.render();
       const renderMs = performance.now() - t0;
-      (window as unknown as { __lastRenderMs?: number; __avgRenderMs?: number; __frameCount?: number }).__lastRenderMs = renderMs;
+      (window as unknown as { __lastRenderMs?: number }).__lastRenderMs = renderMs;
       const win = window as unknown as { __renderTimes?: number[] };
       win.__renderTimes = win.__renderTimes || [];
       win.__renderTimes.push(renderMs);

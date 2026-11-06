@@ -12,28 +12,28 @@ export const AboutSection: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-        {/* Editorial Narrative */}
+        {/* Editorial Narrative - Sitting Directly on Atmospheric Valley Background */}
         <div className="lg:col-span-7 space-y-6">
-          <p className="font-display text-2xl sm:text-3xl text-[#F1EBDD] font-normal leading-relaxed">
+          <p className="font-display text-2xl sm:text-3xl text-[#F1EBDD] font-normal leading-relaxed drop-shadow-md">
             {PORTFOLIO_CONFIG.about.paragraphs[0]}
           </p>
 
-          <p className="font-body text-[#A6A5AE] text-base sm:text-lg leading-relaxed">
+          <p className="font-body text-[#A6A5AE] text-base sm:text-lg leading-relaxed drop-shadow">
             {PORTFOLIO_CONFIG.about.paragraphs[1]}
           </p>
 
-          <div className="pt-4 border-t border-[#8D83C9]/15">
-            <p className="text-xs font-mono text-[#8D83C9]">
+          <div className="pt-4 border-t border-white/10">
+            <span className="glass-pill px-3 py-1 text-xs font-mono text-[#8D83C9]">
               CURRENT BASE: Gandhinagar, Gujarat, India · BTech Sophomore
-            </p>
+            </span>
           </div>
         </div>
 
-        {/* Pillars / Core Drive Cards */}
+        {/* Pillars / Core Drive Cards - Refined Glassmorphism */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="glass-card glass-card-hover rounded-xl p-5 border border-[#8D83C9]/15">
+          <div className="glass-panel glass-panel-hover glass-specular rounded-2xl p-5 border border-white/10 shadow-xl">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-[#25264A]/60 text-[#38BDF8]">
+              <div className="p-2 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8]">
                 <Code2 size={18} />
               </div>
               <h3 className="font-display font-semibold text-base text-[#F1EBDD]">
@@ -45,9 +45,9 @@ export const AboutSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="glass-card glass-card-hover rounded-xl p-5 border border-[#8D83C9]/15">
+          <div className="glass-panel glass-panel-hover glass-specular rounded-2xl p-5 border border-white/10 shadow-xl">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-[#25264A]/60 text-[#C084FC]">
+              <div className="p-2 rounded-xl bg-[#C084FC]/10 border border-[#C084FC]/20 text-[#C084FC]">
                 <Lightbulb size={18} />
               </div>
               <h3 className="font-display font-semibold text-base text-[#F1EBDD]">
@@ -59,9 +59,9 @@ export const AboutSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="glass-card glass-card-hover rounded-xl p-5 border border-[#8D83C9]/15">
+          <div className="glass-panel glass-panel-hover glass-specular rounded-2xl p-5 border border-white/10 shadow-xl">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-[#25264A]/60 text-[#34D399]">
+              <div className="p-2 rounded-xl bg-[#34D399]/10 border border-[#34D399]/20 text-[#34D399]">
                 <Compass size={18} />
               </div>
               <h3 className="font-display font-semibold text-base text-[#F1EBDD]">

@@ -1,15 +1,8 @@
 import React, { useState } from "react";
 import { ArrowDown, FolderGit2, Mail, Volume2, VolumeX } from "lucide-react";
-import { NightFlowerValley } from "../experience/NightFlowerValley";
 import { PORTFOLIO_CONFIG } from "../config/portfolio.config";
 
-interface HeroSectionProps {
-  onValleyLoaded?: () => void;
-}
-
-export const HeroSection: React.FC<HeroSectionProps> = ({
-  onValleyLoaded,
-}) => {
+export const HeroSection: React.FC = () => {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
   const handleAudioToggle = () => {
@@ -25,20 +18,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       id="hero"
       className="relative min-h-screen w-full flex flex-col justify-between items-center text-center px-4 sm:px-6 pt-24 pb-8 overflow-hidden select-none"
     >
-      {/* 3D Night Flower Valley Canvas */}
-      <NightFlowerValley onLoaded={onValleyLoaded} />
+      {/* Subtle Top Header Vignette (Soft atmospheric gradient only) */}
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#04060A]/80 via-[#04060A]/30 to-transparent pointer-events-none z-10" />
 
-      {/* Minimal Top & Bottom Transitions (Keep flowers 100% visible, no heavy darkening overlays) */}
-      <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-[#06080E]/80 to-transparent pointer-events-none z-10" />
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#06080E] to-transparent pointer-events-none z-10" />
-
-      {/* Minimal Identity Line */}
+      {/* Identity Pill Line */}
       <div className="relative z-20 pt-2 mb-2">
-        <p className="font-mono text-[11px] sm:text-xs tracking-wider uppercase text-[#8D83C9]/90 drop-shadow">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-pill text-[11px] sm:text-xs font-mono text-[#8D83C9] drop-shadow">
           <span>{PORTFOLIO_CONFIG.name}</span>
-          <span className="mx-2 text-[#F1EBDD]/40">·</span>
+          <span className="text-[#F1EBDD]/40">·</span>
           <span className="text-[#A6A5AE]">{PORTFOLIO_CONFIG.identityLine}</span>
-        </p>
+        </div>
       </div>
 
       {/* Main Center Typography (Large Condensed Cream Editorial Typography) */}
@@ -56,12 +45,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {PORTFOLIO_CONFIG.supportingCopy}
         </p>
 
-        {/* Primary Call to Actions with Valley Dispersal Hook (HeroPage Technique) */}
+        {/* Primary Call to Actions with Glassmorphism & Valley Dispersal Hook */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
             href="#projects"
             data-valley-hover="true"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#F1EBDD] hover:bg-white text-[#06080E] font-mono font-medium text-xs sm:text-sm transition-all duration-300 shadow-xl shadow-black/60 hover:scale-105 active:scale-95"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#F1EBDD] hover:bg-white text-[#04060A] font-mono font-medium text-xs sm:text-sm transition-all duration-300 shadow-xl shadow-black/50 hover:scale-105 active:scale-95"
           >
             <FolderGit2 size={16} />
             <span>Explore Projects</span>
@@ -70,7 +59,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <a
             href="#contact"
             data-valley-hover="true"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#101522]/70 hover:bg-[#1E1B4B]/80 text-[#F1EBDD] font-mono text-xs sm:text-sm border border-[#8D83C9]/30 transition-all duration-300 backdrop-blur-md hover:border-[#8D83C9]/60 hover:scale-105 active:scale-95"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full glass-pill hover:bg-white/[0.1] text-[#F1EBDD] font-mono text-xs sm:text-sm transition-all duration-300 hover:scale-105 active:scale-95 hover:border-white/30"
           >
             <Mail size={16} className="text-[#8D83C9]" />
             <span>Get in Touch</span>
@@ -80,10 +69,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
       {/* Bottom Corner Bar (Scroll to Wander & Ambient Sound Toggle - HeroPage Architecture) */}
       <div className="relative z-20 w-full max-w-6xl mx-auto px-4 flex items-center justify-between text-[#A6A5AE]/80 font-mono text-xs">
-        {/* Scroll Indicator */}
+        {/* Scroll Indicator Pill */}
         <a
           href="#about"
-          className="flex items-center gap-2 group hover:text-[#F1EBDD] transition"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-pill hover:text-[#F1EBDD] transition group"
           aria-label="Scroll to explore"
         >
           <span className="tracking-widest uppercase text-[10px] text-[#8D83C9]">Scroll to wander</span>
@@ -93,7 +82,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Ambient Sound Toggle Button */}
         <button
           onClick={handleAudioToggle}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#101522]/60 hover:bg-[#1E1B4B]/80 border border-[#8D83C9]/20 hover:border-[#8D83C9]/50 text-[#F1EBDD] transition-all backdrop-blur-md cursor-pointer hover:scale-105"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-pill hover:border-[#8D83C9]/50 text-[#F1EBDD] transition-all cursor-pointer hover:scale-105"
           aria-label={isPlayingAudio ? "Mute ambient valley soundtrack" : "Play ambient valley soundtrack"}
           title={isPlayingAudio ? "Mute ambient sound" : "Play ambient sound"}
         >

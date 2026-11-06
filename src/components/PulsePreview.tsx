@@ -29,11 +29,11 @@ export const PulsePreview: React.FC = () => {
 
     // Palette color lookups
     const palettes: Record<Palette, { primary: string; secondary: string; accent: string; bg: string }> = {
-      violet: { primary: "#C084FC", secondary: "#818CF8", accent: "#38BDF8", bg: "#08090D" },
-      cyberpunk: { primary: "#F43F5E", secondary: "#06B6D4", accent: "#FBBF24", bg: "#08090D" },
-      ocean: { primary: "#0EA5E9", secondary: "#38BDF8", accent: "#67E8F9", bg: "#050B14" },
-      emerald: { primary: "#10B981", secondary: "#34D399", accent: "#6EE7B7", bg: "#05110E" },
-      solar: { primary: "#F59E0B", secondary: "#EF4444", accent: "#FCD34D", bg: "#0F0B08" },
+      violet: { primary: "#C084FC", secondary: "#818CF8", accent: "#38BDF8", bg: "#04060A" },
+      cyberpunk: { primary: "#F43F5E", secondary: "#06B6D4", accent: "#FBBF24", bg: "#04060A" },
+      ocean: { primary: "#0EA5E9", secondary: "#38BDF8", accent: "#67E8F9", bg: "#04060A" },
+      emerald: { primary: "#10B981", secondary: "#34D399", accent: "#6EE7B7", bg: "#04060A" },
+      solar: { primary: "#F59E0B", secondary: "#EF4444", accent: "#FCD34D", bg: "#04060A" },
     };
 
     // Particles for particle mode
@@ -58,142 +58,121 @@ export const PulsePreview: React.FC = () => {
       const mode = modeRef.current;
 
       // Soft trail fade
-      ctx.fillStyle = "rgba(8, 9, 13, 0.22)";
+      ctx.fillStyle = "rgba(4, 6, 10, 0.25)";
       ctx.fillRect(0, 0, width, height);
 
-      // Simulated audio frequency buffer (64 bins)
-      const bufferLength = 48;
-      const freqData = new Float32Array(bufferLength);
-      const bassBeat = Math.sin(time * 3) > 0.7 ? 1.3 : 1.0;
-
-      for (let i = 0; i < bufferLength; i++) {
-        const harmonic1 = Math.sin(time * 2 + i * 0.25) * 0.5 + 0.5;
-        const harmonic2 = Math.cos(time * 3.5 - i * 0.18) * 0.3 + 0.3;
-        const bassWeight = Math.max(0, 1 - i / 14) * bassBeat * 0.4;
-        freqData[i] = Math.min(1.0, (harmonic1 * 0.4 + harmonic2 * 0.3 + bassWeight));
+      // Procedural synthetic FFT spectrum bins (48 bins)
+      const numBins = 48;
+      const bins: number[] = [];
+      for (let i = 0; i < numBins; i++) {
+        const freq = (i / numBins) * 4.0;
+        const val =
+          Math.sin(time * 2.5 + freq * 3.2) * 0.35 +
+          Math.cos(time * 1.8 + freq * 1.6) * 0.35 +
+          Math.sin(time * 0.8 + i * 0.4) * 0.3;
+        bins.push(Math.max(0.05, Math.min(1.0, (val + 1) * 0.5)));
       }
 
-      ctx.save();
-
       if (mode === "circular") {
-        // Circular Waveform Mode
+        const radius = 55;
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        // Core glow circle
         ctx.beginPath();
-        const baseR = 55 * bassBeat;
-        for (let i = 0; i <= bufferLength; i++) {
-          const idx = i % bufferLength;
-          const angle = (i / bufferLength) * Math.PI * 2;
-          const r = baseR + freqData[idx] * 45;
-          const x = cx + Math.cos(angle) * r;
-          const y = cy + Math.sin(angle) * r;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.strokeStyle = curPal.primary;
-        ctx.lineWidth = 3;
-        ctx.shadowColor = curPal.primary;
-        ctx.shadowBlur = 15;
+        ctx.arc(0, 0, radius - 8, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(141, 131, 201, 0.25)";
+        ctx.lineWidth = 1;
         ctx.stroke();
 
-        // Inner glowing ring
-        ctx.beginPath();
-        ctx.arc(cx, cy, baseR * 0.6, 0, Math.PI * 2);
-        ctx.strokeStyle = curPal.secondary;
-        ctx.lineWidth = 1.5;
-        ctx.shadowBlur = 10;
-        ctx.stroke();
-      } else if (mode === "bars") {
-        // Frequency Bars Mode
-        const barWidth = (width - 40) / bufferLength;
-        for (let i = 0; i < bufferLength; i++) {
-          const barHeight = freqData[i] * (height * 0.55);
-          const x = 20 + i * barWidth;
-          const y = height - 20 - barHeight;
+        // Pulsing bars
+        for (let i = 0; i < numBins; i++) {
+          const angle = (i / numBins) * Math.PI * 2;
+          const barHeight = bins[i] * 45;
+          const x1 = Math.cos(angle) * radius;
+          const y1 = Math.sin(angle) * radius;
+          const x2 = Math.cos(angle) * (radius + barHeight);
+          const y2 = Math.sin(angle) * (radius + barHeight);
 
-          const grad = ctx.createLinearGradient(0, y, 0, height - 20);
-          grad.addColorStop(0, curPal.primary);
-          grad.addColorStop(1, curPal.secondary);
+          const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+          grad.addColorStop(0, curPal.secondary);
+          grad.addColorStop(1, curPal.primary);
 
-          ctx.fillStyle = grad;
-          ctx.shadowColor = curPal.primary;
-          ctx.shadowBlur = 6;
-          ctx.fillRect(x, y, barWidth - 2, barHeight);
-        }
-      } else if (mode === "particles") {
-        // Orbiting Particles Mode
-        particles.forEach((p, idx) => {
-          p.angle += p.speed;
-          const freq = freqData[idx % bufferLength];
-          const r = p.baseRadius + freq * 35;
-          const x = cx + Math.cos(p.angle) * r;
-          const y = cy + Math.sin(p.angle) * r;
-
-          ctx.beginPath();
-          ctx.arc(x, y, p.size * (1 + freq * 0.8), 0, Math.PI * 2);
-          ctx.fillStyle = idx % 2 === 0 ? curPal.primary : curPal.accent;
-          ctx.shadowColor = curPal.primary;
-          ctx.shadowBlur = 12;
-          ctx.fill();
-        });
-      } else if (mode === "tunnel") {
-        // Tunnel Rays Mode
-        const rays = 24;
-        for (let i = 0; i < rays; i++) {
-          const angle = (i / rays) * Math.PI * 2 + time * 0.2;
-          const val = freqData[i % bufferLength];
-          const innerR = 15;
-          const outerR = 60 + val * 85;
-
-          const x1 = cx + Math.cos(angle) * innerR;
-          const y1 = cy + Math.sin(angle) * innerR;
-          const x2 = cx + Math.cos(angle) * outerR;
-          const y2 = cy + Math.sin(angle) * outerR;
-
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 3;
+          ctx.lineCap = "round";
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          ctx.strokeStyle = i % 2 === 0 ? curPal.primary : curPal.secondary;
-          ctx.lineWidth = 2 + val * 3;
-          ctx.shadowColor = curPal.accent;
-          ctx.shadowBlur = 10;
+          ctx.stroke();
+        }
+        ctx.restore();
+      } else if (mode === "bars") {
+        const barWidth = width / numBins;
+        for (let i = 0; i < numBins; i++) {
+          const h = bins[i] * (height * 0.85);
+          const x = i * barWidth;
+          const y = height - h;
+
+          const grad = ctx.createLinearGradient(0, height, 0, y);
+          grad.addColorStop(0, curPal.secondary);
+          grad.addColorStop(1, curPal.accent);
+
+          ctx.fillStyle = grad;
+          ctx.fillRect(x + 1, y, barWidth - 2, h);
+        }
+      } else if (mode === "particles") {
+        ctx.save();
+        ctx.translate(cx, cy);
+        for (let i = 0; i < numParticles; i++) {
+          const p = particles[i];
+          p.angle += p.speed;
+          const binIdx = Math.floor((i / numParticles) * numBins);
+          const r = p.baseRadius + bins[binIdx] * 35;
+          const px = Math.cos(p.angle) * r;
+          const py = Math.sin(p.angle) * r;
+
+          ctx.fillStyle = i % 2 === 0 ? curPal.primary : curPal.accent;
+          ctx.beginPath();
+          ctx.arc(px, py, p.size * (0.8 + bins[binIdx]), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      } else if (mode === "tunnel") {
+        for (let ring = 0; ring < 6; ring++) {
+          const r = (ring + 1) * 22 + Math.sin(time * 3 + ring) * 8;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.strokeStyle = ring % 2 === 0 ? curPal.primary : curPal.secondary;
+          ctx.lineWidth = 1.5 + (ring % 3);
           ctx.stroke();
         }
       } else if (mode === "radial") {
-        // Radial Peaks
-        for (let i = 0; i < bufferLength; i++) {
-          const angle = (i / bufferLength) * Math.PI * 2 - Math.PI / 2;
-          const val = freqData[i];
-          const r1 = 30;
-          const r2 = r1 + val * 65;
-
+        ctx.save();
+        ctx.translate(cx, cy);
+        for (let i = 0; i < numBins; i++) {
+          const len = bins[i] * 90;
+          ctx.rotate((Math.PI * 2) / numBins);
+          ctx.strokeStyle = curPal.accent;
+          ctx.lineWidth = 1.5;
           ctx.beginPath();
-          ctx.moveTo(cx + Math.cos(angle) * r1, cy + Math.sin(angle) * r1);
-          ctx.lineTo(cx + Math.cos(angle) * r2, cy + Math.sin(angle) * r2);
-          ctx.strokeStyle = curPal.primary;
-          ctx.lineWidth = 3;
-          ctx.shadowColor = curPal.secondary;
-          ctx.shadowBlur = 8;
+          ctx.moveTo(0, 0);
+          ctx.lineTo(len, 0);
           ctx.stroke();
         }
+        ctx.restore();
       } else if (mode === "ribbon") {
-        // Sine Ribbon Mode
         ctx.beginPath();
-        for (let x = 0; x < width; x += 4) {
-          const norm = x / width;
-          const idx = Math.floor(norm * bufferLength);
-          const amp = freqData[idx] * 40;
-          const y = cy + Math.sin(x * 0.03 + time * 3) * amp + Math.cos(x * 0.015 - time) * 20;
-          if (x === 0) ctx.moveTo(x, y);
+        for (let i = 0; i < numBins; i++) {
+          const x = (i / (numBins - 1)) * width;
+          const y = cy + Math.sin(time * 3 + i * 0.25) * (bins[i] * 65);
+          if (i === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.strokeStyle = curPal.primary;
-        ctx.lineWidth = 3.5;
-        ctx.shadowColor = curPal.accent;
-        ctx.shadowBlur = 14;
+        ctx.lineWidth = 3;
         ctx.stroke();
       }
-
-      ctx.restore();
     };
 
     render();
@@ -204,9 +183,9 @@ export const PulsePreview: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col bg-[#08090D] border border-[#8D83C9]/20 rounded-xl overflow-hidden p-4">
+    <div className="flex flex-col glass-panel glass-specular rounded-2xl overflow-hidden p-5 border border-white/12 shadow-2xl">
       {/* Top Header & Simulation Indicator */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#8D83C9]/15 text-xs">
+      <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#34D399] animate-ping" />
           <span className="font-mono text-[#F1EBDD] font-medium tracking-wider">
@@ -216,7 +195,7 @@ export const PulsePreview: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#25264A]/50 hover:bg-[#25264A] text-[#F1EBDD] transition text-[11px] font-mono cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full glass-pill text-[11px] font-mono cursor-pointer hover:bg-white/[0.1] text-[#F1EBDD]"
             title={isPlaying ? "Pause simulation" : "Play simulation"}
           >
             {isPlaying ? <Pause size={12} /> : <Play size={12} />}
@@ -226,14 +205,14 @@ export const PulsePreview: React.FC = () => {
       </div>
 
       {/* Visualizer Canvas */}
-      <div className="relative my-3 flex items-center justify-center bg-[#050608] rounded-lg overflow-hidden border border-[#8D83C9]/10">
+      <div className="relative my-3 flex items-center justify-center bg-black/40 rounded-xl overflow-hidden border border-white/10">
         <canvas
           ref={canvasRef}
           width={420}
           height={240}
           className="w-full h-auto max-h-[240px] block"
         />
-        <div className="absolute top-2 right-2 text-[10px] font-mono text-[#A6A5AE] bg-black/60 px-2 py-0.5 rounded border border-white/5 pointer-events-none">
+        <div className="absolute top-2 right-2 text-[10px] font-mono text-[#A6A5AE] glass-pill px-2.5 py-0.5 pointer-events-none">
           60 FPS · FFT 48 BINS
         </div>
       </div>
@@ -263,10 +242,10 @@ export const PulsePreview: React.FC = () => {
               <button
                 key={m.id}
                 onClick={() => setCurrentMode(m.id)}
-                className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded text-[11px] font-mono transition cursor-pointer ${
+                className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl text-[11px] font-mono transition cursor-pointer ${
                   active
-                    ? "bg-[#8D83C9]/30 text-[#F1EBDD] border border-[#8D83C9]/50"
-                    : "bg-[#101522]/60 text-[#A6A5AE] hover:text-[#F1EBDD] border border-transparent"
+                    ? "bg-white/[0.15] text-[#F1EBDD] font-semibold border border-white/25 shadow-sm"
+                    : "glass-pill text-[#A6A5AE] hover:text-[#F1EBDD] hover:bg-white/[0.05]"
                 }`}
               >
                 <Icon size={11} />
@@ -278,7 +257,7 @@ export const PulsePreview: React.FC = () => {
       </div>
 
       {/* Palette Selector */}
-      <div className="flex items-center justify-between pt-3 mt-2 border-t border-[#8D83C9]/10 text-xs">
+      <div className="flex items-center justify-between pt-3 mt-2 border-t border-white/10 text-xs">
         <span className="text-[11px] font-mono text-[#A6A5AE]">Palette:</span>
         <div className="flex items-center gap-1.5">
           {(
@@ -294,7 +273,7 @@ export const PulsePreview: React.FC = () => {
               key={p.id}
               onClick={() => setCurrentPalette(p.id)}
               className={`w-5 h-5 rounded-full border transition cursor-pointer ${
-                currentPalette === p.id ? "scale-125 border-white ring-2 ring-white/20" : "border-transparent opacity-70 hover:opacity-100"
+                currentPalette === p.id ? "scale-125 border-white ring-2 ring-white/25" : "border-transparent opacity-70 hover:opacity-100"
               }`}
               style={{ backgroundColor: p.color }}
               title={p.label}

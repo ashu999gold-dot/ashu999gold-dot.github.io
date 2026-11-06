@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navbar } from "./components/Navbar";
 import { CinematicLoader } from "./components/CinematicLoader";
+import { NightFlowerValley } from "./experience/NightFlowerValley";
 import { HeroSection } from "./sections/HeroSection";
 import { AboutSection } from "./sections/AboutSection";
 import { AcademicSection } from "./sections/AcademicSection";
@@ -15,20 +16,24 @@ export function App() {
   const [isSceneLoaded, setIsSceneLoaded] = useState(false);
 
   return (
-    <div className="relative min-h-screen bg-[#08090D] text-[#F1EBDD] font-body selection:bg-[#8D83C9]/40 selection:text-white">
+    <div className="relative min-h-screen bg-[#04060A] text-[#F1EBDD] font-body selection:bg-[#8D83C9]/40 selection:text-white overflow-x-hidden">
       {/* Cinematic Loader */}
       <CinematicLoader isLoading={!isSceneLoaded} />
 
-      {/* Persistent Navigation */}
+      {/* Persistent Continuous 3D Night Flower Valley Background (Mounted Once for the Entire Site) */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <NightFlowerValley onLoaded={() => setIsSceneLoaded(true)} />
+      </div>
+
+      {/* Persistent Floating Glass Navigation */}
       <Navbar />
 
-      <main>
-        {/* Hero Section with 3D Night Flower Valley (Decoupled Passive Motion Loop) */}
-        <HeroSection
-          onValleyLoaded={() => setIsSceneLoaded(true)}
-        />
+      {/* Main Content Layer Scrolling Smoothly over the Continuous 3D Flower World */}
+      <main className="relative z-10 pointer-events-auto">
+        {/* Hero Section */}
+        <HeroSection />
 
-        {/* Section Divider Ethereal Light Line */}
+        {/* Section Divider Ethereal Glowing Line */}
         <div className="w-full max-w-5xl mx-auto h-[1px] bg-gradient-to-r from-transparent via-[#8D83C9]/25 to-transparent my-4" />
 
         {/* About Section */}
@@ -66,7 +71,9 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <Footer />
+      <div className="relative z-10">
+        <Footer />
+      </div>
     </div>
   );
 }

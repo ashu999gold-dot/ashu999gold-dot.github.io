@@ -20,17 +20,17 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md overflow-y-auto"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl glass-card rounded-2xl border border-[#8D83C9]/30 bg-[#0A0D16]/95 shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto text-left"
+        className="relative w-full max-w-3xl glass-panel glass-specular rounded-3xl border border-white/20 shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto text-left"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-lg bg-[#25264A]/40 hover:bg-[#25264A] text-[#A6A5AE] hover:text-[#F1EBDD] transition border border-[#8D83C9]/15 cursor-pointer"
+          className="absolute top-5 right-5 p-2 rounded-full glass-pill hover:bg-white/[0.15] text-[#A6A5AE] hover:text-[#F1EBDD] transition cursor-pointer"
           aria-label="Close modal"
         >
           <X size={18} />
@@ -39,11 +39,11 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
         {/* Header */}
         <div className="mb-6 pr-8">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-mono text-[#8D83C9] bg-[#8D83C9]/15 px-2.5 py-0.5 rounded border border-[#8D83C9]/25">
+            <span className="text-xs font-mono text-[#8D83C9] glass-pill px-3 py-0.5">
               {project.category}
             </span>
             {project.badge && (
-              <span className="text-xs font-mono text-[#38BDF8] bg-[#38BDF8]/10 px-2.5 py-0.5 rounded border border-[#38BDF8]/20">
+              <span className="text-xs font-mono text-[#38BDF8] glass-pill border-[#38BDF8]/30 px-3 py-0.5">
                 {project.badge}
               </span>
             )}
@@ -75,7 +75,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
         </div>
 
         {/* Problem Solved */}
-        <div className="mb-6 p-4 rounded-xl bg-[#101522]/80 border border-[#8D83C9]/15">
+        <div className="mb-6 p-5 rounded-2xl bg-white/[0.04] border border-white/10">
           <h3 className="text-xs font-mono uppercase tracking-wider text-[#38BDF8] mb-1.5 flex items-center gap-1.5">
             <Cpu size={14} />
             Engineering Problem & Objective
@@ -113,7 +113,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             {project.techStack.map((tech) => (
               <span
                 key={tech}
-                className="text-xs font-mono text-[#F1EBDD] bg-[#25264A]/50 border border-[#8D83C9]/25 px-2.5 py-1 rounded-md"
+                className="text-xs font-mono text-[#F1EBDD] bg-white/[0.06] border border-white/10 px-3 py-1 rounded-full"
               >
                 {tech}
               </span>
@@ -122,7 +122,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
         </div>
 
         {/* Action Footers */}
-        <div className="flex items-center justify-between pt-4 border-t border-[#8D83C9]/15">
+        <div className="flex items-center justify-between pt-4 border-t border-white/10">
           <span className="text-xs font-mono text-[#A6A5AE]/80">
             Repository: <code className="text-[#8D83C9] font-mono">{project.githubRepoName}</code> (Private)
           </span>
@@ -133,7 +133,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 href={project.liveDemoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#F1EBDD] hover:bg-white text-[#08090D] text-xs font-mono font-medium transition shadow-lg"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#F1EBDD] hover:bg-white text-[#04060A] text-xs font-mono font-semibold transition shadow-lg hover:scale-105"
               >
                 <span>Launch Live App</span>
                 <ExternalLink size={13} />
@@ -141,7 +141,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             )}
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-[#25264A]/60 hover:bg-[#25264A] text-[#F1EBDD] text-xs font-mono transition border border-[#8D83C9]/20 cursor-pointer"
+              className="px-4 py-2 rounded-full glass-pill hover:bg-white/[0.1] text-[#F1EBDD] text-xs font-mono transition cursor-pointer"
             >
               Close
             </button>

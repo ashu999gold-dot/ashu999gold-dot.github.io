@@ -70,7 +70,6 @@ export const GitHubExplorer: React.FC = () => {
       }
 
       const reposData: GitHubRepo[] = await reposRes.json();
-      // Ensure only strictly public repositories are displayed
       const strictlyPublic = reposData.filter(
         (r) => !r.private && (r.visibility ? r.visibility === "public" : true)
       );
@@ -100,13 +99,13 @@ export const GitHubExplorer: React.FC = () => {
   const filteredRepos = useMemo(() => {
     return repos
       .filter((repo) => {
-        const matchesSearch =
+        const matchesQuery =
           repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (repo.description &&
             repo.description.toLowerCase().includes(searchQuery.toLowerCase()));
         const matchesLang =
           selectedLanguage === "all" || repo.language === selectedLanguage;
-        return matchesSearch && matchesLang;
+        return matchesQuery && matchesLang;
       })
       .sort((a, b) => {
         if (sortBy === "stars") {
@@ -117,9 +116,9 @@ export const GitHubExplorer: React.FC = () => {
   }, [repos, searchQuery, selectedLanguage, sortBy]);
 
   return (
-    <div className="w-full">
-      {/* Verified Profile Header Card */}
-      <div className="glass-card rounded-2xl p-6 md:p-8 mb-8 border border-[#8D83C9]/20">
+    <div className="space-y-6">
+      {/* Live Profile Overview Glass Panel */}
+      <div className="glass-panel glass-specular rounded-3xl p-6 sm:p-8 border border-white/12 shadow-2xl">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -127,14 +126,14 @@ export const GitHubExplorer: React.FC = () => {
                 <img
                   src={userInfo.avatar_url}
                   alt={userInfo.name || "Ashutosh Kumar"}
-                  className="w-16 h-16 rounded-full border-2 border-[#8D83C9]/40 object-cover"
+                  className="w-16 h-16 rounded-full border-2 border-white/20 object-cover shadow-lg"
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-[#101522] border-2 border-[#8D83C9]/40 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-white/[0.08] border-2 border-white/20 flex items-center justify-center shadow-lg">
                   <GithubIcon className="text-[#8D83C9]" size={28} />
                 </div>
               )}
-              <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[#34D399] border-2 border-[#08090D]" />
+              <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[#34D399] border-2 border-[#04060A]" />
             </div>
 
             <div>
@@ -142,7 +141,7 @@ export const GitHubExplorer: React.FC = () => {
                 <h3 className="font-display font-semibold text-lg text-[#F1EBDD]">
                   {userInfo?.name || "Ashutosh Kumar"}
                 </h3>
-                <span className="text-xs font-mono text-[#8D83C9] bg-[#8D83C9]/10 px-2 py-0.5 rounded border border-[#8D83C9]/20">
+                <span className="glass-pill text-xs font-mono text-[#8D83C9] px-2.5 py-0.5">
                   @{userInfo?.login || "ashu999gold-dot"}
                 </span>
               </div>
@@ -158,18 +157,18 @@ export const GitHubExplorer: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-            <div className="flex items-center gap-4 text-center">
-              <div className="px-3 py-1.5 rounded-lg bg-[#08090D]/50 border border-[#8D83C9]/15">
+            <div className="flex items-center gap-3 text-center">
+              <div className="glass-pill px-3.5 py-1.5 rounded-2xl">
                 <span className="block font-mono text-base font-semibold text-[#F1EBDD]">
                   {userInfo ? userInfo.public_repos : 0}
                 </span>
-                <span className="text-[11px] font-mono text-[#A6A5AE] uppercase">Public Repos</span>
+                <span className="text-[10px] font-mono text-[#A6A5AE] uppercase">Public Repos</span>
               </div>
-              <div className="px-3 py-1.5 rounded-lg bg-[#08090D]/50 border border-[#8D83C9]/15">
+              <div className="glass-pill px-3.5 py-1.5 rounded-2xl">
                 <span className="block font-mono text-base font-semibold text-[#F1EBDD]">
                   {userInfo ? userInfo.followers : 2}
                 </span>
-                <span className="text-[11px] font-mono text-[#A6A5AE] uppercase">Followers</span>
+                <span className="text-[10px] font-mono text-[#A6A5AE] uppercase">Followers</span>
               </div>
             </div>
 
@@ -177,7 +176,7 @@ export const GitHubExplorer: React.FC = () => {
               <button
                 onClick={fetchGitHubData}
                 disabled={loading}
-                className="p-2.5 rounded-lg bg-[#25264A]/50 hover:bg-[#25264A] text-[#F1EBDD] transition border border-[#8D83C9]/20 cursor-pointer disabled:opacity-50"
+                className="p-2.5 rounded-full glass-pill hover:bg-white/[0.1] text-[#F1EBDD] transition cursor-pointer disabled:opacity-50"
                 title="Refresh live GitHub API"
                 aria-label="Refresh GitHub Data"
               >
@@ -187,10 +186,10 @@ export const GitHubExplorer: React.FC = () => {
                 href="https://github.com/ashu999gold-dot"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F1EBDD] hover:bg-white text-[#08090D] font-medium text-xs font-mono transition shadow-lg"
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#F1EBDD] hover:bg-white text-[#04060A] font-medium text-xs font-mono transition shadow-lg hover:scale-105"
               >
                 <GithubIcon size={14} />
-                <span>View GitHub Profile</span>
+                <span>Profile</span>
                 <ExternalLink size={12} />
               </a>
             </div>
@@ -210,7 +209,7 @@ export const GitHubExplorer: React.FC = () => {
             placeholder="Filter public repositories..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#101522]/70 border border-[#8D83C9]/20 rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#F1EBDD] placeholder-[#A6A5AE]/60 focus:outline-none focus:border-[#8D83C9] font-mono transition"
+            className="w-full glass-pill rounded-full pl-10 pr-4 py-2.5 text-sm text-[#F1EBDD] placeholder-[#A6A5AE]/60 focus:outline-none focus:border-white/30 font-mono transition"
           />
         </div>
 
@@ -220,11 +219,11 @@ export const GitHubExplorer: React.FC = () => {
             name="languageFilter"
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="bg-[#101522]/70 border border-[#8D83C9]/20 rounded-xl px-4 py-2.5 text-xs text-[#F1EBDD] font-mono focus:outline-none focus:border-[#8D83C9] cursor-pointer"
+            className="glass-pill rounded-full px-4 py-2.5 text-xs text-[#F1EBDD] font-mono focus:outline-none focus:border-white/30 cursor-pointer"
           >
-            <option value="all">All Languages</option>
+            <option value="all" className="bg-[#0D1220]">All Languages</option>
             {availableLanguages.map((lang) => (
-              <option key={lang} value={lang}>
+              <option key={lang} value={lang} className="bg-[#0D1220]">
                 {lang}
               </option>
             ))}
@@ -236,21 +235,21 @@ export const GitHubExplorer: React.FC = () => {
           name="sortFilter"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as "updated" | "stars")}
-          className="bg-[#101522]/70 border border-[#8D83C9]/20 rounded-xl px-4 py-2.5 text-xs text-[#F1EBDD] font-mono focus:outline-none focus:border-[#8D83C9] cursor-pointer"
+          className="glass-pill rounded-full px-4 py-2.5 text-xs text-[#F1EBDD] font-mono focus:outline-none focus:border-white/30 cursor-pointer"
         >
-          <option value="updated">Recently Updated</option>
-          <option value="stars">Most Stars</option>
+          <option value="updated" className="bg-[#0D1220]">Recently Updated</option>
+          <option value="stars" className="bg-[#0D1220]">Most Stars</option>
         </select>
       </div>
 
       {/* Explorer Results Container */}
       {loading ? (
-        <div className="glass-card rounded-2xl p-12 text-center border border-[#8D83C9]/15">
+        <div className="glass-panel rounded-3xl p-12 text-center border border-white/12 shadow-xl">
           <RefreshCw className="animate-spin mx-auto text-[#8D83C9] mb-3" size={24} />
           <p className="font-mono text-sm text-[#A6A5AE]">Querying live GitHub API for @ashu999gold-dot...</p>
         </div>
       ) : error ? (
-        <div className="glass-card rounded-2xl p-8 text-center border border-red-500/20 bg-red-950/10">
+        <div className="glass-panel rounded-3xl p-8 text-center border border-red-500/20 bg-red-950/20 shadow-xl">
           <p className="font-mono text-sm text-red-300 mb-2">GitHub API Notice: {error}</p>
           <p className="text-xs text-[#A6A5AE] font-body">
             Public rate limits may apply. Please explore the verified project showcase above.
@@ -261,7 +260,7 @@ export const GitHubExplorer: React.FC = () => {
           {filteredRepos.map((repo) => (
             <div
               key={repo.id}
-              className="glass-card glass-card-hover rounded-xl p-5 border border-[#8D83C9]/15 flex flex-col justify-between"
+              className="glass-panel glass-panel-hover glass-specular rounded-2xl p-5 border border-white/12 flex flex-col justify-between shadow-xl"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -271,7 +270,7 @@ export const GitHubExplorer: React.FC = () => {
                       {repo.name}
                     </a>
                   </h4>
-                  <span className="text-[10px] font-mono uppercase bg-[#34D399]/15 text-[#34D399] px-2 py-0.5 rounded border border-[#34D399]/30">
+                  <span className="text-[10px] font-mono uppercase bg-[#34D399]/15 text-[#34D399] px-2 py-0.5 rounded-full border border-[#34D399]/30">
                     Public
                   </span>
                 </div>
@@ -280,7 +279,7 @@ export const GitHubExplorer: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-[#8D83C9]/10 text-xs font-mono text-[#A6A5AE]">
+              <div className="flex items-center justify-between pt-3 border-t border-white/10 text-xs font-mono text-[#A6A5AE]">
                 <div className="flex items-center gap-3">
                   {repo.language && (
                     <span className="flex items-center gap-1 text-[#F1EBDD]">
@@ -313,10 +312,10 @@ export const GitHubExplorer: React.FC = () => {
         </div>
       ) : (
         /* Honest, Respectful Empty State */
-        <div className="glass-card rounded-2xl p-8 md:p-12 text-center border border-[#8D83C9]/20 relative overflow-hidden">
+        <div className="glass-panel rounded-3xl p-8 md:p-12 text-center border border-white/12 relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-64 h-64 radial-glow-cyan opacity-40 pointer-events-none" />
           <div className="max-w-md mx-auto relative z-10">
-            <div className="w-12 h-12 rounded-xl bg-[#25264A]/60 border border-[#8D83C9]/30 flex items-center justify-center mx-auto mb-4 text-[#8D83C9]">
+            <div className="w-12 h-12 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center mx-auto mb-4 text-[#8D83C9] shadow-lg">
               <Lock size={22} />
             </div>
             <h4 className="font-display text-lg font-semibold text-[#F1EBDD] mb-2">
@@ -326,7 +325,7 @@ export const GitHubExplorer: React.FC = () => {
               Live GitHub API returned <span className="font-mono text-[#F1EBDD]">0 public repositories</span> for{" "}
               <span className="font-mono text-[#8D83C9]">@ashu999gold-dot</span>. Active student projects (including AI Advisor, PULSE, CampusRadar, and SlotSync) are maintained in private development repositories.
             </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#101522] border border-[#8D83C9]/30 text-xs font-mono text-[#8D83C9]">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-pill text-xs font-mono text-[#8D83C9]">
               <Sparkles size={13} className="text-[#38BDF8]" />
               <span>Explore verified technical architecture in the Featured Projects section above</span>
             </div>

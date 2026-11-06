@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-midnight: #08090D;
-  --color-navy-deep: #0D111A;
-  --color-navy-dark: #101522;
-  --color-navy-card: #13192B;
-  --color-indigo-deep: #25264A;
+  --color-midnight: #04060A;
+  --color-navy-deep: #080C16;
+  --color-navy-dark: #0D1220;
+  --color-navy-card: #10162A;
+  --color-indigo-deep: #1E1B4B;
   --color-violet-muted: #8D83C9;
   --color-cream: #F1EBDD;
   --color-text-muted: #A6A5AE;
@@ -20,14 +20,17 @@
 }
 
 :root {
-  --bg-midnight: #08090D;
-  --bg-card: rgba(16, 21, 34, 0.7);
-  --border-subtle: rgba(141, 131, 201, 0.15);
-  --border-hover: rgba(141, 131, 201, 0.4);
+  --bg-midnight: #04060A;
+  --glass-bg: rgba(14, 18, 32, 0.48);
+  --glass-bg-hover: rgba(20, 26, 46, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-hover: rgba(141, 131, 201, 0.38);
+  --glass-border-accent: rgba(56, 189, 248, 0.35);
+  --glass-highlight: rgba(255, 255, 255, 0.08);
 }
 
 html {
-  background-color: #08090D;
+  background-color: #04060A;
   color: #F1EBDD;
   font-family: var(--font-body);
   scroll-behavior: smooth;
@@ -37,7 +40,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background-color: #08090D;
+  background-color: #04060A;
 }
 
 /* Custom scrollbar */
@@ -45,44 +48,99 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #08090D;
+  background: #04060A;
 }
 ::-webkit-scrollbar-thumb {
-  background: #25264A;
+  background: rgba(141, 131, 201, 0.25);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8D83C9;
+  background: rgba(141, 131, 201, 0.5);
 }
 
-/* Atmospheric effects */
-.radial-mist {
-  background: radial-gradient(circle at 50% 50%, rgba(37, 38, 74, 0.35) 0%, rgba(8, 9, 13, 0) 70%);
+/* --- Premium Glassmorphism Design System --- */
+
+/* Standard Glass Container */
+.glass-panel {
+  background: rgba(14, 18, 32, 0.48);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
-.radial-glow-cyan {
-  background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15) 0%, rgba(8, 9, 13, 0) 65%);
+/* Interactive Glass Container with Refined Hover Physics */
+.glass-panel-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.radial-glow-emerald {
-  background: radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.15) 0%, rgba(8, 9, 13, 0) 65%);
+.glass-panel-hover:hover {
+  background: rgba(20, 26, 46, 0.62);
+  border-color: rgba(141, 131, 201, 0.35);
+  box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.55), 0 0 24px 0 rgba(141, 131, 201, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
 }
 
+/* Floating Glass Pill (Navbars, tags, filter bars) */
+.glass-pill {
+  background: rgba(16, 21, 38, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Soft Inner Specular Highlight on Card Tops */
+.glass-specular {
+  position: relative;
+}
+
+.glass-specular::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  pointer-events: none;
+}
+
+/* Backward compatibility aliases */
 .glass-card {
-  background: rgba(16, 21, 34, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(141, 131, 201, 0.14);
+  background: rgba(14, 18, 32, 0.48);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 .glass-card-hover {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card-hover:hover {
-  background: rgba(19, 25, 43, 0.85);
+  background: rgba(20, 26, 46, 0.62);
   border-color: rgba(141, 131, 201, 0.35);
-  transform: translateY(-2px);
+  box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.55), 0 0 24px 0 rgba(141, 131, 201, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
+}
+
+/* Atmospheric Gradients */
+.radial-mist {
+  background: radial-gradient(circle at 50% 50%, rgba(37, 38, 74, 0.3) 0%, rgba(4, 6, 10, 0) 70%);
+}
+
+.radial-glow-cyan {
+  background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.14) 0%, rgba(4, 6, 10, 0) 65%);
+}
+
+.radial-glow-violet {
+  background: radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.14) 0%, rgba(4, 6, 10, 0) 65%);
+}
+
+.radial-glow-emerald {
+  background: radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.12) 0%, rgba(4, 6, 10, 0) 65%);
 }
 
 /* Typography styles */
